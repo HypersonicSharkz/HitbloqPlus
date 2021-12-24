@@ -2,8 +2,8 @@
 // @name         HitbloqPlus
 // @namespace    http://tampermonkey.net/
 // @version      0.1
-// @description  try to take over the world!
-// @author       You
+// @description  More features for hitbloq
+// @author       HypersonicSharkz
 // @match        https://hitbloq.com/*
 // @icon         https://www.google.com/s2/favicons?domain=hitbloq.com
 // @updateURL    https://github.com/HypersonicSharkz/HitbloqPlus/raw/main/hitbloq-plus.js
