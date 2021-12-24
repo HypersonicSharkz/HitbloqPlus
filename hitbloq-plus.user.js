@@ -228,7 +228,7 @@ function updateScores(maps,page) {
 if (href.includes("/ladder/")) {
     console.log(pool_id);
     $(".player-search-section").prepend('<div class="pool_button">');
-    $(".pool_button").append('<a class="fas fa-list fa-2x icon-hbplus" href="https://hitbloq.com/ranked_list/'+pool_id+'" id="rankedList">');
+    $(".pool_button").append('<a class="fas fa-list fa-2x icon-hbplus" href="https://hitbloq.com/ranked_list/'+pool_id+'" id="rankedList" title="View Pool Maps">');
     $(".pool_button").css({"margin":"10 10","float":"left","width":"100%"});
 
     if (savedUserID != -1)
@@ -256,7 +256,7 @@ if (href.includes("/ranked_list/")) {
 
 
     $(".pool-search-section").prepend('<div class="ladder_button">');
-    $(".ladder_button").append('<a class="fas fa-users fa-2x icon-hbplus" href="https://hitbloq.com/ladder/'+pool_id+'" id="rankedList">');
+    $(".ladder_button").append('<a class="fas fa-users fa-2x icon-hbplus" href="https://hitbloq.com/ladder/'+pool_id+'" id="poolMaps" title="View Pool Leaderboard">');
     $(".ladder_button").css({"margin":"10 10","float":"left","width":"100%"});
 
     if (savedUserID != -1)
@@ -280,21 +280,29 @@ if (href.includes("/map_pools")) {
             if ($(e.target).parent(".favorite-pools").length)
                 return;
 
+
+
             var poolLink = $(e.target).find('a').slice(0,1).attr('href');
             if (poolLink) {
 
                 var _pool = poolLink.split("/");
                 _pool = _pool[_pool.length - 1]
 
-                $(e.target).find(".map-pool-links-right").append('<a class="fas fa-user-circle map-pool-link" href="https://hitbloq.com/user/'+savedUserID+'?pool='+_pool+'">');
+                //Tooltips
+                $(e.target).find('.fa-users').attr("title", "View Pool Leaderboard");
+                $(e.target).find('.fa-list').attr("title", "View Pool Maps");
+                $(e.target).find('.fa-download').attr("title", "Download Pool Playlist");
+
+                $(e.target).find(".map-pool-links-right").append('<a class="fas fa-user-circle map-pool-link" href="https://hitbloq.com/user/'+savedUserID+'?pool='+_pool+'" title="Go to profile">');
                 //check favorites :O
 
-                $(e.target).find(".map-pool-links-right").append('<a class="far fa-star" href="javascript:void(0)">');
+                $(e.target).find(".map-pool-links-right").append('<a class="far fa-star" href="javascript:void(0)" title="Favorite Pool">');
                 var fav = $(e.target).find(".fa-star");
 
                 if (favorite_pools.includes(_pool)) {
 
                     fav.addClass("fas").removeClass("far");
+                    fav.attr("title", "Remove from favorites")
 
                     $(fav).click(function() {
 
@@ -513,7 +521,8 @@ if (href.includes("/user/")) {
 
 
     if (savedUserID == userID){
-        $(".icon-hbplus-setuser").css({"color": "green", "title": "This is your profile"});
+        $(".icon-hbplus-setuser").css({"color": "green"});
+        $(".icon-hbplus-setuser").attr("title", "This is your profile")
     }
 
     $(".icon-hbplus-setuser").hover(function(){
@@ -527,8 +536,8 @@ if (href.includes("/user/")) {
     });
 
 
-    $(".player-profile-pool-stats").append('<a class="fas fa-list fa-2x map-pool-link icon-hbplus" href="https://hitbloq.com/ranked_list/'+pool_id+'" id="rankedList" style="margin: 5px 0 0 0">');
-    $(".player-profile-pool-stats").append('<a class="fas fa-users fa-2x map-pool-link icon-hbplus" href="https://hitbloq.com/ladder/'+pool_id+'" id="rankedList" style="margin: 5px 10px">');
+    $(".player-profile-pool-stats").append('<a class="fas fa-list fa-2x map-pool-link icon-hbplus" href="https://hitbloq.com/ranked_list/'+pool_id+'" id="rankedList" style="margin: 5px 0 0 0" title="View Pool Maps">');
+    $(".player-profile-pool-stats").append('<a class="fas fa-users fa-2x map-pool-link icon-hbplus" href="https://hitbloq.com/ladder/'+pool_id+'" id="rankedList" style="margin: 5px 10px" title="View Pool Leaderboard">');
 
 
     $(".profile-score-sorts").append('<a href="'+loc+'?pool='+pool_id+'&sort=not_played" class="sort-link" id="not_played-sort-link">Unplayed</a>');
@@ -574,7 +583,7 @@ if (href.includes("/user/")) {
             var _pool = poolLink.split("/");
             _pool = _pool[_pool.length - 1];
 
-            $(e.target).find(".player-rank-pool").prepend('<a class="fas fa-user-circle map-pool-link" id="goto_user_profile" href="https://hitbloq.com/user/'+userID+'?pool='+_pool+'">');
+            $(e.target).find(".player-rank-pool").prepend('<a class="fas fa-user-circle map-pool-link" id="goto_user_profile" href="https://hitbloq.com/user/'+userID+'?pool='+_pool+'" title="Go to pool profile">');
         }
     });
 
@@ -605,6 +614,10 @@ $(".icon-hbplus").hover(function(){
 }, function(){
     $(this).css({"color": "inherit", "transition": "all 250ms ease-in-out"});
 });
+
+
+
+
 
 
 
