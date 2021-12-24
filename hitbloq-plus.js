@@ -6,6 +6,9 @@
 // @author       You
 // @match        https://hitbloq.com/*
 // @icon         https://www.google.com/s2/favicons?domain=hitbloq.com
+// @updateURL    https://github.com/motzel/scoresaber-unranked-acc/raw/master/scoresaber-unranked-acc.user.js
+// @downloadURL  https://github.com/motzel/scoresaber-unranked-acc/raw/master/scoresaber-unranked-acc.user.js
+// @supportURL   https://github.com/motzel/scoresaber-unranked-acc/issues
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @require      http://code.jquery.com/jquery-latest.js
