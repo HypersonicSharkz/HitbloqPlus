@@ -6,8 +6,8 @@
 // @author       HypersonicSharkz
 // @match        https://hitbloq.com/*
 // @icon         https://www.google.com/s2/favicons?domain=hitbloq.com
-// @updateURL    https://github.com/HypersonicSharkz/HitbloqPlus/raw/main/hitbloq-plus.js
-// @downloadURL  https://github.com/HypersonicSharkz/HitbloqPlus/raw/main/hitbloq-plus.js
+// @updateURL    https://github.com/HypersonicSharkz/HitbloqPlus/raw/master/hitbloq-plus.js
+// @downloadURL  https://github.com/HypersonicSharkz/HitbloqPlus/raw/master/hitbloq-plus.js
 // @supportURL   https://github.com/HypersonicSharkz/HitbloqPlus/issues
 // @grant        GM_getValue
 // @grant        GM_setValue
