@@ -230,6 +230,7 @@ if (href.includes("/ladder/")) {
     $(".player-search-section").prepend('<div class="pool_button">');
     $(".pool_button").append('<a class="fas fa-list fa-2x icon-hbplus" href="https://hitbloq.com/ranked_list/'+pool_id+'" id="rankedList" title="View Pool Maps">');
     $(".pool_button").css({"margin":"10 10","float":"left","width":"100%"});
+    $(".pool_button").append('<a class="fas fa-home fa-2x icon-hbplus" style="margin-left:10px" href="https://hitbloq.com/map_pool/'+pool_id+'" id="poolButton" title="Go to map pool">');
 
     if (savedUserID != -1)
         $(".player-search-section").append('<a class="fas fa-user-circle fa-2x icon-hbplus" id="goto_user_profile" href="https://hitbloq.com/user/'+savedUserID+'?pool='+pool_id+'" title="Go to profile">');
@@ -258,6 +259,9 @@ if (href.includes("/ranked_list/")) {
     $(".pool-search-section").prepend('<div class="ladder_button">');
     $(".ladder_button").append('<a class="fas fa-users fa-2x icon-hbplus" href="https://hitbloq.com/ladder/'+pool_id+'" id="poolMaps" title="View Pool Leaderboard">');
     $(".ladder_button").css({"margin":"10 10","float":"left","width":"100%"});
+
+    $(".ladder_button").append('<a class="fas fa-home fa-2x icon-hbplus" style="margin-left:10px" href="https://hitbloq.com/map_pool/'+pool_id+'" id="poolButton" title="Go to map pool">');
+
 
     if (savedUserID != -1)
         $(".pool-search-section").append('<a class="fas fa-user-circle fa-2x icon-hbplus" id="goto_user_profile" href="https://hitbloq.com/user/'+savedUserID+'?pool='+pool_id+'" title="Go to profile">');
