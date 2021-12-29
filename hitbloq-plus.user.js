@@ -238,33 +238,41 @@ if (href.includes("/ladder/")) {
 
 if (href.includes("/ranked_list/")) {
     //start by getting all maps in a list
-    getMapJson();
-
-
     $("#ranked-list-container").prepend('<div class="pool-search-section card popup-element">');
     $(".pool-search-section").css({"display":"flex","justify-content":"right"});
-    $(".pool-search-section").append('<input id="pool-search" class="simple-input" type="text" placeholder="Search Map" name="input" autocomplete="off">');
-    $("#pool-search").css({"margin":"0 0.3em 2em 0"});
-    $('#pool-search').keyup(function(e){
-        var str = $('#pool-search').val().toLowerCase();
-        var filteredMaps = pool_maps.filter((x)=>{
-            return x["song_name"].toLowerCase().includes(str)
-        })
-        updateList(filteredMaps);
-        //console.log(filteredMaps);
-
-    });
-
 
     $(".pool-search-section").prepend('<div class="ladder_button">');
     $(".ladder_button").append('<a class="fas fa-users fa-2x icon-hbplus" href="https://hitbloq.com/ladder/'+pool_id+'" id="poolMaps" title="View Pool Leaderboard">');
     $(".ladder_button").css({"margin":"10 10","float":"left","width":"100%"});
 
+    if (savedUserID != -1)
+        $(".pool-search-section").append('<a class="fas fa-user-circle fa-2x icon-hbplus" id="goto_user_profile" href="https://hitbloq.com/user/'+savedUserID+'?pool='+pool_id+'" title="Go to profile">');
+
+    (async() => {
+
+        getMapJson();
+
+        while(!gotMaps)
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+        $(".pool-search-section").append('<input id="pool-search" style="margin:0px 10px;" class="simple-input" type="text" placeholder="Search Map" name="input" autocomplete="off">');
+        $("#pool-search").css({"margin":"0 0.3em 2em 0"});
+        $('#pool-search').keyup(function(e){
+            var str = $('#pool-search').val().toLowerCase();
+            var filteredMaps = pool_maps.filter((x)=>{
+                return x["song_name"].toLowerCase().includes(str)
+            })
+            updateList(filteredMaps);
+            //console.log(filteredMaps);
+
+        });
+    })();
+
+
     $(".ladder_button").append('<a class="fas fa-home fa-2x icon-hbplus" style="margin-left:10px" href="https://hitbloq.com/map_pool/'+pool_id+'" id="poolButton" title="Go to map pool">');
 
 
-    if (savedUserID != -1)
-        $(".pool-search-section").append('<a class="fas fa-user-circle fa-2x icon-hbplus" id="goto_user_profile" href="https://hitbloq.com/user/'+savedUserID+'?pool='+pool_id+'" title="Go to profile">');
+
 }
 
 
