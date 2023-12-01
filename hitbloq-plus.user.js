@@ -11,11 +11,104 @@
 // @supportURL   https://github.com/HypersonicSharkz/HitbloqPlus/issues
 // @grant        GM_getValue
 // @grant        GM_setValue
-// @require      http://code.jquery.com/jquery-latest.js
-// @require      https://userscripts-mirror.org/scripts/source/107941.user.js
+// @require      https://code.jquery.com/jquery-3.6.0.min.js
 // @run-at       document-idle
 // ==/UserScript==
 
+/* globals $ */
+
+var JSON_MarkerStr  = 'json_val: ';
+var FunctionMarker  = 'function_code: ';
+
+function setValue (varName, varValue) {
+
+    if ( ! varName) {
+        ReportError ('Illegal varName sent to GM_SuperValue.set().');
+        return;
+    }
+    if (/[^\w _-]/.test (varName) ) {
+        ReportError ('Suspect, probably illegal, varName sent to GM_SuperValue.set().');
+    }
+
+    switch (typeof varValue) {
+        case 'undefined':
+            ReportError ('Illegal varValue sent to GM_SuperValue.set().');
+            break;
+        case 'boolean':
+        case 'string':
+            //--- These 2 types are safe to store, as is.
+            GM_setValue (varName, varValue);
+            break;
+        case 'number':
+            /*--- Numbers are ONLY safe if they are integers.
+                    Note that hex numbers, EG 0xA9, get converted
+                    and stored as decimals, EG 169, automatically.
+                    That's a feature of JavaScript.
+
+                    Also, only a 32-bit, signed integer is allowed.
+                    So we only process +/-2147483647 here.
+                */
+            if (varValue === parseInt (varValue)  &&  Math.abs (varValue) < 2147483647)
+            {
+                GM_setValue (varName, varValue);
+                break;
+            }
+        case 'object':
+            /*--- For all other cases (but functions), and for
+                    unsafe numbers, store the value as a JSON string.
+                */
+            var safeStr = JSON_MarkerStr + JSON.stringify (varValue);
+            GM_setValue (varName, safeStr);
+            break;
+        case 'function':
+            /*--- Functions need special handling.
+                */
+            safeStr = FunctionMarker + varValue.toString ();
+            GM_setValue (varName, safeStr);
+            break;
+
+        default:
+            ReportError ('Unknown type in GM_SuperValue.set()!');
+            break;
+    }
+}
+
+function getValue (varName, defaultValue) {
+
+    if ( ! varName) {
+        ReportError ('Illegal varName sent to GM_SuperValue.get().');
+        return;
+    }
+    if (/[^\w _-]/.test (varName) ) {
+        ReportError ('Suspect, probably illegal, varName sent to GM_SuperValue.get().');
+    }
+
+    //--- Attempt to get the value from storage.
+    var varValue    = GM_getValue (varName);
+    if (!varValue)
+        return defaultValue;
+
+    //--- We got a value from storage. Now unencode it, if necessary.
+    if (typeof varValue == "string") {
+        //--- Is it a JSON value?
+        var regxp       = new RegExp ('^' + JSON_MarkerStr + '(.+)$');
+        var m           = varValue.match (regxp);
+        if (m  &&  m.length > 1) {
+            varValue    = JSON.parse ( m[1] );
+            return varValue;
+        }
+
+        //--- Is it a function?
+        regxp       = new RegExp ('^' + FunctionMarker + '((?:.|\n|\r)+)$');
+        m           = varValue.match (regxp);
+        if (m  &&  m.length > 1) {
+            varValue    = eval ('(' + m[1] + ')');
+            return varValue;
+        }
+    }
+
+    return varValue;
+}
 
 
 
@@ -25,11 +118,11 @@ var path = href.split('/');
 var pool_id = path[path.length - 1].split('?')[0];
 
 var pool_maps = [];
-var played_pool_maps = GM_SuperValue.get("hbplus_user_scores", {});
-var favorite_pools = GM_SuperValue.get("hbplus_favorite_pools", []);
+var played_pool_maps = getValue("hbplus_user_scores", {});
+var favorite_pools =  getValue("hbplus_favorite_pools", []);
 var last_score_time = 0;
 
-var savedUserID = GM_SuperValue.get("hbplus_saved_userid", -1);
+var savedUserID =  getValue("hbplus_saved_userid", -1);
 var userID = -1;
 
 
@@ -74,9 +167,9 @@ function createMenu() {
 
     $("#closeMenu").click(function() {$( "#menuBase" ).remove(); menuOpen=false;} )
 
-    $("#menuClearCache").click(function() { if(confirm("Are you sure you want to clear the cache?")) { GM_SuperValue.set("hbplus_user_scores", {});
-                                            GM_SuperValue.set("hbplus_favorite_pools", []);
-                                            GM_SuperValue.set("hbplus_saved_userid", -1); }
+    $("#menuClearCache").click(function() { if(confirm("Are you sure you want to clear the cache?")) { setValue("hbplus_user_scores", {});
+                                            setValue("hbplus_favorite_pools", []);
+                                            setValue("hbplus_saved_userid", -1); }
                                           })
 
     $(".menuItem").css({
@@ -128,7 +221,7 @@ function getUserScores(p_userID, checkID = true, first = true) {
                 last_score_time = played_pool_maps[""+pool_id+""][0]["time"];
                 removeDuplicateScores();
                 removeUnrankedMaps(pool_maps);
-                GM_SuperValue.set("hbplus_user_scores", played_pool_maps);;
+                setValue("hbplus_user_scores", played_pool_maps);;
                 userScores = played_pool_maps[""+pool_id+""];
                 gotScores=true;
             }
@@ -277,7 +370,7 @@ if (href.includes("/ranked_list/")) {
 
 
 function SetUserProfile(user_id) {
-    GM_SuperValue.set("hbplus_saved_userid", user_id);
+    setValue("hbplus_saved_userid", user_id);
 }
 
 
@@ -319,7 +412,7 @@ if (href.includes("/map_pools")) {
                     $(fav).click(function() {
 
                         favorite_pools.splice(favorite_pools.indexOf(_pool), 1);
-                        GM_SuperValue.set("hbplus_favorite_pools", favorite_pools);
+                        setValue("hbplus_favorite_pools", favorite_pools);
                         $(e.target).remove();
                     });
 
@@ -327,7 +420,7 @@ if (href.includes("/map_pools")) {
                 } else {
                     $(fav).click(function() {
                         favorite_pools.push(_pool);
-                        GM_SuperValue.set("hbplus_favorite_pools", favorite_pools);
+                        setValue("hbplus_favorite_pools", favorite_pools);
                         $(".favorite-pools").append($(e.target).detach());
                         $(fav).removeClass("far");
                         $(fav).addClass("fas");
